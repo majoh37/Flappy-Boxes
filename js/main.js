@@ -33,17 +33,25 @@ var mainState = {
  game.physics.arcade.enable(this.bird);
  this.bird.body.gravity.y = 1000;
  
+ this.pipes = game.add.group();
+ 
  //add Pipes to the gamethis.pipes=game.add.group ();
  this.pipes.enableBody = true;
  //Create 20 pipes to hold in the group
- this.pipes.createMultiple (20, 'pipe');
+ this.pipes.createMultiple(20, 'pipe');
  
  //Add in pipes over 1.5 seconds to the screen
- this.timer = game.time.events.loop(1500,this.addRowOfPipes.this)
+ this.timer = game.time.events.loop(1500,this.addRowOfPipes, this)
+ 
+ this.score = 0;
+ this.labelScore = game.add.text(20,20, "0", {font: "30px Arial", fill: "#ffffff"});
+ 
+
  
  
  //When spacebar is pressed, make the bird jump!
- var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+var spaceKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
  spaceKey.onDown.add(this.jump,this);
  
  },
@@ -54,15 +62,14 @@ var mainState = {
   
   if (this.bird.inWorld == false) {
     this.restartGame();
+ }
+ game.physics.arcade.overlap (this.bird, this.pipes, this.restartGame, null, this);
  
- 
- 
-  }
   },
   
- addOnePipe: function (){
+ addOnePipe: function(x,y){
    //Get the first dead pipe
-   var pipe = this.pipes.getFirstDead ();
+   var pipe = this.pipes.getFirstDead();
    
    //Set x and y values of the pipe
    pipe.reset(x,y);
@@ -89,7 +96,8 @@ var mainState = {
       
     }
     
-    
+    this.score += 1;
+    this.labelScore.text = this.score;
   },
   
   
